@@ -4,7 +4,7 @@ interface InputProps {
   label: string;
   name: string;
   kind?: 'text' | 'phone' | 'price';
-  type: string;
+  type: React.HTMLInputTypeAttribute;
   register: UseFormRegisterReturn;
   required: boolean;
 }
