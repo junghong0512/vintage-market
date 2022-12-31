@@ -2,7 +2,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import withHandler, { ResponseType } from '@libs/server/withHandler';
 import client from '@libs/server/client';
 
+// TWILIO
 import twilio from 'twilio';
+// SENDGRID
+import mail from '@sendgrid/mail';
+
+mail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
@@ -38,6 +43,15 @@ async function handler(
       to: process.env.MY_PHONE_NUMBER!,
       body: `Your login token is ${payload}.`,
     });
+  } else if (email) {
+    const email = await mail.send({
+      from: 'junghong0512@gamil.com',
+      to: 'junghong0512@gmail.com',
+      subject: 'Your Vintage Market Verification Email',
+      text: `Your token is ${payload}`,
+      html: `<strong>Your token is ${payload}</strong>`,
+    });
+    console.log(email);
   }
 
   return res.json({ ok: true });
