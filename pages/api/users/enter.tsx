@@ -6,6 +6,8 @@ import client from '@libs/server/client';
 import twilio from 'twilio';
 // SENDGRID
 import mail from '@sendgrid/mail';
+// NAVER MAIL
+import smtpTransport from '@libs/server/email';
 
 mail.setApiKey(process.env.SENDGRID_API_KEY!);
 
@@ -44,14 +46,26 @@ async function handler(
       body: `Your login token is ${payload}.`,
     });
   } else if (email) {
-    const email = await mail.send({
-      from: 'junghong0512@gamil.com',
-      to: 'junghong0512@gmail.com',
-      subject: 'Your Vintage Market Verification Email',
-      text: `Your token is ${payload}`,
-      html: `<strong>Your token is ${payload}</strong>`,
-    });
-    console.log(email);
+    const mailOptions = {
+      from: process.env.MAIL_ID,
+      to: email,
+      subject: 'Nomad Carrot Authentication Email',
+      text: `Authentication Code : ${payload}`,
+    };
+    const result = await smtpTransport.sendMail(
+      mailOptions,
+      (error, responses) => {
+        if (error) {
+          console.log(error);
+          return null;
+        } else {
+          console.log(responses);
+          return null;
+        }
+      },
+    );
+    smtpTransport.close();
+    console.log(result);
   }
 
   return res.json({ ok: true });
