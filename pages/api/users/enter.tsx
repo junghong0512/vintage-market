@@ -40,13 +40,13 @@ async function handler(
   });
 
   if (phone) {
-    const message = await twilioClient.messages.create({
+    /* const message = await twilioClient.messages.create({
       messagingServiceSid: process.env.TWILIO_MESSAGING_SID,
       to: process.env.MY_PHONE_NUMBER!,
       body: `Your login token is ${payload}.`,
-    });
+    }); */
   } else if (email) {
-    const mailOptions = {
+    /* const mailOptions = {
       from: process.env.MAIL_ID,
       to: email,
       subject: 'Nomad Carrot Authentication Email',
@@ -65,7 +65,7 @@ async function handler(
       },
     );
     smtpTransport.close();
-    console.log(result);
+    console.log(result); */
   }
 
   return res.json({ ok: true });
