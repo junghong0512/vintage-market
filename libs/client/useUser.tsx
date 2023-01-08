@@ -1,7 +1,8 @@
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import useSWR from 'swr';
 
-export default function useUser() {
+/* export default function useUser() {
   const [user, setUser] = useState();
   const router = useRouter();
   useEffect(() => {
@@ -15,4 +16,12 @@ export default function useUser() {
       });
   }, [router]);
   return user;
+} */
+
+const fetcher = (url: string) => fetch(url).then((response) => response.json());
+
+export default function useUser() {
+  const { data, error } = useSWR('/api/users/me', fetcher);
+  const router = useRouter();
+  return data;
 }
