@@ -1,5 +1,10 @@
+import { useEffect } from 'react';
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
+import { Product } from '@prisma/client';
+
+// Components
 import Button from '@components/button';
 import Input from '@components/input';
 import Layout from '@components/layout';
@@ -12,13 +17,25 @@ interface UploadProductForm {
   description: string;
 }
 
+interface UploadProductMutation {
+  ok: boolean;
+  product: Product;
+}
+
 const Upload: NextPage = () => {
+  const router = useRouter();
   const { register, handleSubmit } = useForm<UploadProductForm>();
-  const [uploadProduct, { loading, data }] = useMutation('/api/products');
+  const [uploadProduct, { loading, data }] =
+    useMutation<UploadProductMutation>('/api/products');
   const onValid = (data: UploadProductForm) => {
     if (loading) return;
     uploadProduct(data);
   };
+  useEffect(() => {
+    if (data?.ok) {
+      router.push(`/products/${data.product.id}`);
+    }
+  }, [data, router]);
 
   return (
     <Layout canGoBack title='Upload Product'>
