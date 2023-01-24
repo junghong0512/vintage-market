@@ -26,13 +26,19 @@ interface ItemDetailResponse {
 
 const ItemDetail: NextPage = () => {
   const router = useRouter();
-  const { data } = useSWR<ItemDetailResponse>(
+  const { data, mutate } = useSWR<any>(
     router.query.id ? `/api/products/${router.query.id}` : null,
   );
 
-  const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`);
+  const [toggleFav, { loading }] = useMutation(
+    `/api/products/${router.query.id}/fav`,
+  );
   const onFavClick = () => {
-    toggleFav({});
+    if (!data) return;
+    mutate({ ...data, isLiked: !data.isLiked }, false);
+    if (!loading) {
+      toggleFav({});
+    }
   };
 
   return (
