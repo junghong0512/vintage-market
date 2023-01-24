@@ -1,13 +1,14 @@
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 
 // Prisma
 import { Product, User } from '@prisma/client';
 
 // Custom Hook
 import useMutation from '@libs/client/useMutation';
+import useUser from '@libs/client/useUser';
 import { cls } from '@libs/client/utils';
 
 import Button from '@components/button';
@@ -25,8 +26,10 @@ interface ItemDetailResponse {
 }
 
 const ItemDetail: NextPage = () => {
+  const { user, isLoading } = useUser();
   const router = useRouter();
-  const { data, mutate } = useSWR<any>(
+  const { mutate: unboundMutate } = useSWRConfig();
+  const { data, mutate: boundMutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null,
   );
 
@@ -35,7 +38,9 @@ const ItemDetail: NextPage = () => {
   );
   const onFavClick = () => {
     if (!data) return;
-    mutate({ ...data, isLiked: !data.isLiked }, false);
+    boundMutate((prev) => prev && { ...prev, isLiked: !data.isLiked }, false);
+    // unboundMutate('/api/users/me', (prev: any) => ({ ok: !prev.ok }), false); // Not Fetching Again, 데이터만 변경
+    // unboundMutate('/api/users/me'); // Refetching
     if (!loading) {
       toggleFav({});
     }
