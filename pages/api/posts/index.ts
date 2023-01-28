@@ -24,7 +24,7 @@ async function handler(
       session: { user },
     } = req;
 
-    const post = client.post.create({
+    const post = await client.post.create({
       data: {
         question,
         user: {
@@ -34,6 +34,7 @@ async function handler(
         },
       },
     });
+
     res.json({
       ok: true,
       post,

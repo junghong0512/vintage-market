@@ -1,7 +1,9 @@
+// React
 import { useEffect } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
+// Prisma
 import { Post } from '@prisma/client';
 
 import Button from '@components/button';
@@ -24,7 +26,7 @@ const Write: NextPage = () => {
   const [post, { loading, data }] = useMutation<WriteResponse>('/api/posts');
 
   const onValid = (data: WriteForm) => {
-    if (loading) return;
+    if (loading) return; // Prevent user from clicking the submit button several times
     post(data);
   };
 
