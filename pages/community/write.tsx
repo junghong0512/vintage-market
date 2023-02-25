@@ -10,9 +10,10 @@ import Button from '@components/button';
 import Layout from '@components/layout';
 import TextArea from '@components/textarea';
 import useMutation from '@libs/client/useMutation';
+import useCoords from '@libs/client/useCoords';
 
 interface WriteForm {
-  question: String;
+  question: string;
 }
 
 interface WriteResponse {
@@ -21,13 +22,18 @@ interface WriteResponse {
 }
 
 const Write: NextPage = () => {
+  const { latitude, longitude } = useCoords();
   const router = useRouter();
   const { register, handleSubmit } = useForm<WriteForm>();
   const [post, { loading, data }] = useMutation<WriteResponse>('/api/posts');
 
   const onValid = (data: WriteForm) => {
     if (loading) return; // Prevent user from clicking the submit button several times
-    post(data);
+    post({
+      ...data,
+      latitude,
+      longitude,
+    });
   };
 
   useEffect(() => {
