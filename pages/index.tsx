@@ -8,20 +8,30 @@ import Item from '@components/item';
 import Layout from '@components/layout';
 import { Product } from '@prisma/client';
 
-interface ProductResponse {
+/* interface ProductResponse {
   ok: boolean;
   products: (Product & {
     _count: {
       favs: number;
     };
   })[];
+} */
+
+export interface ProductWithCount extends Product {
+  _count: {
+    favs: number;
+  };
+}
+
+interface ProductsResponse {
+  ok: boolean;
+  products: ProductWithCount[];
 }
 
 const Home: NextPage = () => {
   const { user, isLoading } = useUser();
 
-  const { data } = useSWR<ProductResponse>('/api/products');
-  console.log(data);
+  const { data } = useSWR<ProductsResponse>('/api/products');
 
   return (
     <Layout title='홈' hasTabBar>
